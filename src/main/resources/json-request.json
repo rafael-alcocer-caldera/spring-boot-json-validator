@@ -1,0 +1,11 @@
+{
+	"json": {
+        "id": 13,
+        "name": "test",
+        "description": "This Json file is a test",
+        "field_not_required": "Not required",
+        "cost": 8999.99,
+        "active": true,
+        "any_date": "2022-11-13"
+	}
+}

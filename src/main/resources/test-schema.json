@@ -1,0 +1,40 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "Test",
+	"description": "Json Test",
+	"type": "object",
+	"properties": {
+	    "id": {
+			"description": "Identifier",
+			"type": "integer"
+		},
+		"name": {
+			"description": "Name to test",
+			"type": "string"
+		},
+		"description": {
+			"description": "Description to test",
+			"type": "string"
+		},
+		"field_not_required": {
+			"description": "This field is optional",
+			"type": "string"
+		},
+		"cost": {
+			"description": "Cost to test",
+			"type": "number"
+		},
+		"active": {
+			"description": "Is active",
+			"type": "boolean"
+		},
+		"any_date": {
+			"description": "Any date",
+			"type": "string",
+            "format": "date"
+		}
+	},
+	"required": [
+		"id", "name", "cost", "any_date", "active"
+	]
+}
