@@ -23,5 +23,7 @@ import net.sf.json.JSONObject;
 @Data
 public class Model implements Serializable {
 
-    private JSONObject json;
+    private String jsonSchemaName;
+    private JSONObject jsonSchema;
+    private JSONObject jsonData;
 }

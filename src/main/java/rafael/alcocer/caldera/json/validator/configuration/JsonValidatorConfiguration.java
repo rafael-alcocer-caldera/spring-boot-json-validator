@@ -15,7 +15,6 @@
  */
 package rafael.alcocer.caldera.json.validator.configuration;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,10 +26,7 @@ import net.jimblackler.jsonschemafriend.Validator;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties("json.schema")
 public class JsonValidatorConfiguration {
-
-    private String fileName;
 
     /**
      * Initialize a SchemaStore.

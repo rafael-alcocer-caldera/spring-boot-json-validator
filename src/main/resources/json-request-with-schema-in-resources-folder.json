@@ -1,5 +1,6 @@
 {
-	"json": {
+    "jsonSchemaName": "test-schema.json",
+    "jsonData": {
         "id": 13,
         "name": "test",
         "description": "This Json file is a test",
@@ -7,5 +8,5 @@
         "cost": 8999.99,
         "active": true,
         "any_date": "2022-11-13"
-	}
+    }
 }

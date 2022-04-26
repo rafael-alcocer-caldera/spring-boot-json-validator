@@ -41,7 +41,7 @@ HAPPY PATH 1
 
 All the fields are received with the correct value
 
-GET
+POST
 http://localhost:8067/json/validator
 
 
@@ -49,7 +49,8 @@ Body
 ----
 ```json
 {
-	"json": {
+    "jsonSchemaName": "test-schema.json",
+    "jsonData": {
         "id": 13,
         "name": "test",
         "description": "This Json file is a test",
@@ -57,7 +58,7 @@ Body
         "cost": 8999.99,
         "active": true,
         "any_date": "2022-11-13"
-	}
+    }
 }
 ```
 
@@ -65,7 +66,7 @@ Response:
 ---------
 ```json
 {
-    "timestamp": "2022-04-15T04:54:12.398+00:00",
+    "timestamp": "2022-04-26T02:49:45.756+00:00",
     "status": 200,
     "error": "OK",
     "message": "Json received OK",
@@ -77,11 +78,8 @@ Eclipse Console (HAPPY PATH 1):
 -------------------------------
 ```log
 
-2022-04-14 23:54:10.555  INFO 16372 --- [nio-8067-exec-2] r.a.c.j.v.c.JsonValidatorController      : ##### Json Schema Name: test-schema.json
+2022-04-25 21:49:45.738  INFO 5132 --- [nio-8067-exec-2] r.a.c.j.v.c.JsonValidatorController      : Json Schema:  ##### test-schema.json #####  validated and works fine.
 
-2022-04-14 23:54:12.381  INFO 16372 --- [nio-8067-exec-2] r.a.c.j.v.c.JsonValidatorController      : ##### If you get here... it means that the validation was OK...
-
-2022-04-14 23:54:12.381  INFO 16372 --- [nio-8067-exec-2] r.a.c.j.v.c.JsonValidatorController      : ##### This is the Json request: {"id":13,"name":"test","description":"This Json file is a test","field_not_required":"Not required","cost":8999.99,"active":true,"any_date":"2022-11-13"}
 
 ```
 
@@ -90,21 +88,22 @@ HAPPY PATH 2
 ------------
 The following field "field_not_required" is missing but it is not required, so it is OK 
 
-GET
+POST
 http://localhost:8067/json/validator
 
 Body
 ----
 ```json
 {
-	"json": {
+    "jsonSchemaName": "test-schema.json",
+    "jsonData": {
         "id": 13,
         "name": "test",
         "description": "This Json file is a test",
         "cost": 8999.99,
         "active": true,
         "any_date": "2022-11-13"
-	}
+    }
 }
 ```
 
@@ -112,7 +111,7 @@ Response:
 ---------
 ```json
 {
-    "timestamp": "2022-04-15T04:56:46.241+00:00",
+    "timestamp": "2022-04-26T02:52:40.387+00:00",
     "status": 200,
     "error": "OK",
     "message": "Json received OK",
@@ -124,11 +123,7 @@ Eclipse Console (HAPPY PATH 2):
 -------------------------------
 ```log
 
-2022-04-14 23:56:44.692  INFO 16700 --- [nio-8067-exec-1] r.a.c.j.v.c.JsonValidatorController      : ##### Json Schema Name: test-schema.json
-
-2022-04-14 23:56:46.218  INFO 16700 --- [nio-8067-exec-1] r.a.c.j.v.c.JsonValidatorController      : ##### If you get here... it means that the validation was OK...
-
-2022-04-14 23:56:46.219  INFO 16700 --- [nio-8067-exec-1] r.a.c.j.v.c.JsonValidatorController      : ##### This is the Json request: {"id":13,"name":"test","description":"This Json file is a test","cost":8999.99,"active":true,"any_date":"2022-11-13"}
+2022-04-25 21:52:40.371  INFO 20336 --- [nio-8067-exec-1] r.a.c.j.v.c.JsonValidatorController      : Json Schema:  ##### test-schema.json #####  validated and works fine.
 
 ```
 
@@ -136,21 +131,22 @@ WHEN A REQUIRED PROPERTY IS MISSING
 -----------------------------------
 The field "id" is required. And in this example is missing.
 
-GET
+POST
 http://localhost:8067/json/validator
 
 Body
 ----
 ```json
 {
-	"json": {
+    "jsonSchemaName": "test-schema.json",
+    "jsonData": {
         "name": "test",
         "description": "This Json file is a test",
         "field_not_required": "Not required",
         "cost": 8999.99,
         "active": true,
         "any_date": "2022-11-13"
-	}
+    }
 }
 ```
 
@@ -158,9 +154,9 @@ Response:
 ---------
 ```json
 {
-    "timestamp": "2022-04-15T21:50:20.945+00:00",
-    "status": 417,
-    "error": "Expectation Failed",
+    "timestamp": "2022-04-26T02:54:41.074+00:00",
+    "status": 400,
+    "error": "Bad Request",
     "message": "Missing data: Validation errors: {\"name\":\"test\",\"description\":\"This Json file is a test\",\"... at root failed against file:/C:/RAC/workspaceSpringBoot/spring-boot-json-validator/target/classes/test-schema.json with \"Missing property id\"",
     "path": "/json/validator"
 }
@@ -170,9 +166,7 @@ Eclipse Console (WHEN A REQUIRED PROPERTY IS MISSING):
 ------------------------------------------------------
 ```log
 
-2022-04-15 16:50:18.878  INFO 18916 --- [nio-8067-exec-1] r.a.c.j.v.c.JsonValidatorController      : ##### Json Schema Name: test-schema.json
-
-2022-04-15 16:50:20.928 ERROR 18916 --- [nio-8067-exec-1] r.a.c.j.v.c.JsonValidatorController      : ##### ERROR: Validation errors: {"name":"test","description":"This Json file is a test","... at root failed against file:/C:/RAC/workspaceSpringBoot/spring-boot-json-validator/target/classes/test-schema.json with "Missing property id"
+2022-04-25 21:54:41.053 ERROR 9936 --- [nio-8067-exec-1] r.a.c.j.v.c.JsonValidatorController      :  ##### ERROR: Validation errors: {"name":"test","description":"This Json file is a test","... at root failed against file:/C:/RAC/workspaceSpringBoot/spring-boot-json-validator/target/classes/test-schema.json with "Missing property id"
 
 ```
 
@@ -180,14 +174,15 @@ WHEN A PROPERTY DATA TYPE IS INCORRECT
 --------------------------------------
 The field "cost" is of type number. In this example is a string.
 
-GET
+POST
 http://localhost:8067/json/validator
 
 Body
 ----
 ```json
 {
-	"json": {
+    "jsonSchemaName": "test-schema.json",
+    "jsonData": {
         "id": 13,
         "name": "test",
         "description": "This Json file is a test",
@@ -195,7 +190,7 @@ Body
         "cost": "hi",
         "active": true,
         "any_date": "2022-11-13"
-	}
+    }
 }
 ```
 
@@ -203,9 +198,9 @@ Response:
 ---------
 ```json
 {
-    "timestamp": "2022-04-15T21:54:43.221+00:00",
-    "status": 417,
-    "error": "Expectation Failed",
+    "timestamp": "2022-04-26T02:56:00.046+00:00",
+    "status": 400,
+    "error": "Bad Request",
     "message": "Missing data: Validation errors: \"hi\" at #/cost failed against file:/C:/RAC/workspaceSpringBoot/spring-boot-json-validator/target/classes/test-schema.json#/properties/cost with \"Expected: [number] Found: [string]\"",
     "path": "/json/validator"
 }
@@ -215,10 +210,92 @@ Eclipse Console (WHEN A PROPERTY DATA TYPE IS INCORRECT):
 ---------------------------------------------------------
 ```log
 
-2022-04-15 16:54:41.620  INFO 19092 --- [nio-8067-exec-1] r.a.c.j.v.c.JsonValidatorController      : ##### Json Schema Name: test-schema.json
+2022-04-25 21:56:00.027 ERROR 20040 --- [nio-8067-exec-3] r.a.c.j.v.c.JsonValidatorController      :  ##### ERROR: Validation errors: "hi" at #/cost failed against file:/C:/RAC/workspaceSpringBoot/spring-boot-json-validator/target/classes/test-schema.json#/properties/cost with "Expected: [number] Found: [string]"
 
-2022-04-15 16:54:43.201 ERROR 19092 --- [nio-8067-exec-1] r.a.c.j.v.c.JsonValidatorController      : ##### ERROR: Validation errors: "hi" at #/cost failed against file:/C:/RAC/workspaceSpringBoot/spring-boot-json-validator/target/classes/test-schema.json#/properties/cost with "Expected: [number] Found: [string]"
+```
 
+YOU CAN DO THE SAME TESTS AS ABOVE WITH THE FOLLOWING
+-----------------------------------------------------
+POST
+http://localhost:8067/json/validator
+
+Body
+----
+```json
+{
+    "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "Test",
+        "description": "Json Test",
+        "type": "object",
+        "properties": {
+            "id": {
+                "description": "Identifier",
+                "type": "integer"
+            },
+            "name": {
+                "description": "Name to test",
+                "type": "string"
+            },
+            "description": {
+                "description": "Description to test",
+                "type": "string"
+            },
+            "field_not_required": {
+                "description": "This field is optional",
+                "type": "string"
+            },
+            "cost": {
+                "description": "Cost to test",
+                "type": "number"
+            },
+            "active": {
+                "description": "Is active",
+                "type": "boolean"
+            },
+            "any_date": {
+                "description": "Any date",
+                "type": "string",
+                "format": "date"
+            }
+        },
+        "required": [
+            "id",
+            "name",
+            "cost",
+            "any_date",
+            "active"
+        ]
+    },
+    "jsonData": {
+        "id": 13,
+        "name": "test",
+        "description": "This Json file is a test",
+        "field_not_required": "Not required",
+        "cost": 8999.99,
+        "active": true,
+        "any_date": "2022-11-13"
+    }
+}
+```
+
+Response:
+---------
+```json
+{
+    "timestamp": "2022-04-26T02:59:15.115+00:00",
+    "status": 200,
+    "error": "OK",
+    "message": "Json received OK",
+    "path": "/json/validator"
+}
+```
+
+Eclipse Console (WHEN A REQUIRED PROPERTY IS MISSING):
+------------------------------------------------------
+```log
+
+2022-04-25 21:59:15.102  INFO 18108 --- [nio-8067-exec-2] r.a.c.j.v.c.JsonValidatorController      : Json Schema:  ##### {"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Test","description":"Json Test","type":"object","properties":{"id":{"description":"Identifier","type":"integer"},"name":{"description":"Name to test","type":"string"},"description":{"description":"Description to test","type":"string"},"field_not_required":{"description":"This field is optional","type":"string"},"cost":{"description":"Cost to test","type":"number"},"active":{"description":"Is active","type":"boolean"},"any_date":{"description":"Any date","type":"string","format":"date"}},"required":["id","name","cost","any_date","active"]} #####  validated and works fine.
 
 ```
 

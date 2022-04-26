@@ -17,12 +17,14 @@ package rafael.alcocer.caldera.json.validator.controller;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -42,27 +44,46 @@ import rafael.alcocer.caldera.json.validator.model.Model;
 public class JsonValidatorController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonValidatorController.class);
+
+    private static final String ERROR = "ERROR: ";
+    private static final String HASH_TAG = " ##### ";
+    private static final String JSON_RECEIVED_OK = "Json received OK";
+    private static final String JSON_SCHEMA = "Json Schema: ";
+    private static final String MISSING_DATA = "Missing data: ";
+    private static final String NOT_NULL_MESSAGE = "jsonSchemaName or jsonSchema in the request Body must not be null, empty, or whitespace only";
+    private static final String VALIDATED = " validated and works fine.";
+
     private final JsonValidatorConfiguration config;
 
-    @ResponseStatus(code = HttpStatus.OK, reason = "Json received OK")
-    @GetMapping("/validator")
+    @ResponseStatus(code = HttpStatus.OK, reason = JSON_RECEIVED_OK)
+    @PostMapping("/validator")
     @ResponseBody
-    public void sendMessage(@RequestBody Model model) {
+    public void validateJson(@RequestBody Model model) {
         try {
-            LOGGER.info("##### Json Schema Name: " + config.getFileName());
+            if (StringUtils.isNotBlank(model.getJsonSchemaName())) {
+                Resource resource = new ClassPathResource(model.getJsonSchemaName());
 
-            Resource resource = new ClassPathResource(config.getFileName());
-            // InputStream input = resource.getInputStream(); // It is necessary although it
-            // looks like not
+                // If the following validation is not correct, then will go to catch
+                config.validator().validate(config.schemaStore().loadSchema(resource.getFile()), model.getJsonData());
 
-            // If the following validation is not correct, then will go to catch
-            config.validator().validate(config.schemaStore().loadSchema(resource.getFile()), model.getJson());
+                LOGGER.info(JSON_SCHEMA + HASH_TAG + model.getJsonSchemaName() + HASH_TAG + VALIDATED);
 
-            LOGGER.info("##### If you get here... it means that the validation was OK...");
-            LOGGER.info("##### This is the Json request: " + model.getJson());
+                return;
+            }
+
+            if (ObjectUtils.isNotEmpty(model.getJsonSchema())) {
+                // If the following validation is not correct, then will go to catch
+                config.validator().validate(config.schemaStore().loadSchema(model.getJsonSchema()), model.getJsonData());
+
+                LOGGER.info(JSON_SCHEMA + HASH_TAG + model.getJsonSchema() + HASH_TAG + VALIDATED);
+
+                return;
+            }
+
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, NOT_NULL_MESSAGE);
         } catch (ValidationException | GenerationException | IOException e) {
-            LOGGER.error("##### ERROR: " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Missing data: " + e.getMessage(), e);
+            LOGGER.error(HASH_TAG + ERROR + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MISSING_DATA + e.getMessage(), e);
         }
     }
 }

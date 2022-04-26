@@ -1,8 +1,5 @@
 server:
   port : 8067
+  # To include message in the response
   error:
     include-message: always
-
-json:
-  schema: 
-    file-name: test-schema.json
